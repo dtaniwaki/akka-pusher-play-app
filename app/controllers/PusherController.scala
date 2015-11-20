@@ -17,7 +17,7 @@ class PusherController extends Controller
   def authAction = Action(parse.urlFormEncoded) { implicit request =>
     val key = request.headers.get("X-Pusher-Key").get
     val signature = request.headers.get("X-Pusher-Signature").get
-    val pusherRequest = request.body.toString.parseJson.convertTo[AuthRequest]
+    val pusherRequest = Json.toJson(request.body).toString.parseJson.convertTo[AuthRequest]
 
     if (pusherClient.validateSignature(key, signature, request.body.toString)) {
       val res = pusherClient.authenticate(
@@ -31,7 +31,7 @@ class PusherController extends Controller
     }
   }
 
-  def webhookAction = Action { implicit request =>
+  def webhookAction = Action(parse.text) { implicit request =>
     request.body.toString.parseJson.convertTo[WebhookRequest].events foreach {
       case event =>
         logger.warn(s"Got event: $event")

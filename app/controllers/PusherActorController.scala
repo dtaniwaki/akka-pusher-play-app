@@ -25,7 +25,7 @@ class PusherActorController @Inject() (implicit system: ActorSystem) extends Con
   def authAction = Action.async(parse.urlFormEncoded) { implicit request =>
     val key = request.headers.get("X-Pusher-Key").get
     val signature = request.headers.get("X-Pusher-Signature").get
-    val pusherRequest = request.body.toString.parseJson.convertTo[AuthRequest]
+    val pusherRequest = Json.toJson(request.body).toString.parseJson.convertTo[AuthRequest]
 
     (pusherActor ask ValidateSignatureMessage(key, signature, request.body.toString)).flatMap {
       case ResponseMessage(true) =>
@@ -44,7 +44,7 @@ class PusherActorController @Inject() (implicit system: ActorSystem) extends Con
     }
   }
 
-  def webhookAction = Action.async { implicit request =>
+  def webhookAction = Action.async(parse.text) { implicit request =>
     request.body.toString.parseJson.convertTo[WebhookRequest].events foreach {
       case event =>
         logger.warn(s"Got event: $event")
