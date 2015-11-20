@@ -1,0 +1,20 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+
+POST    /pusher/auth                controllers.PusherController.authAction
+POST    /pusher/webhook             controllers.PusherController.webhookAction
+POST    /pusher/trigger             controllers.PusherController.triggerAction
+POST    /pusher/channel             controllers.PusherController.channelAction
+POST    /pusher/channels            controllers.PusherController.channelsAction
+POST    /pusher/users               controllers.PusherController.usersAction
+
+POST    /pusher_actor/auth                controllers.PusherActorController.authAction
+POST    /pusher_actor/webhook             controllers.PusherActorController.webhookAction
+POST    /pusher_actor/trigger             controllers.PusherActorController.triggerAction
+POST    /pusher_actor/channel             controllers.PusherActorController.channelAction
+POST    /pusher_actor/channels            controllers.PusherActorController.channelsAction
+POST    /pusher_actor/users               controllers.PusherActorController.usersAction
