@@ -17,7 +17,7 @@ class PusherController extends Controller
   def authAction = Action(parse.urlFormEncoded) { implicit request =>
     val key = request.headers.get("X-Pusher-Key").get
     val signature = request.headers.get("X-Pusher-Signature").get
-    val pusherRequest = Json.toJson(request.body).toString.parseJson.convertTo[AuthRequest]
+    val pusherRequest = Json.stringify(Json.toJson(request.body.toMap)).parseJson.convertTo[AuthRequest]
 
     if (pusherClient.validateSignature(key, signature, request.body.toString)) {
       val res = pusherClient.authenticate(
@@ -31,30 +31,30 @@ class PusherController extends Controller
     }
   }
 
-  def webhookAction = Action(parse.text) { implicit request =>
-    request.body.toString.parseJson.convertTo[WebhookRequest].events foreach {
+  def webhookAction = Action(parse.json) { implicit request =>
+    Json.stringify(request.body).parseJson.convertTo[WebhookRequest].events foreach {
       case event =>
         logger.warn(s"Got event: $event")
     }
     Ok(Json.toJson("{}"))
   }
 
-  def triggerAction = Action.async { implicit request =>
+  def triggerAction = Action.async(parse.json) { implicit request =>
     val (channel, event, body) = triggerForm.get
     pusherClient.trigger(channel, event, body).map { res => Ok(Json.toJson(res.toJson.toString)) }
   }
 
-  def channelAction = Action.async { implicit request =>
+  def channelAction = Action.async(parse.json) { implicit request =>
     val (channel) = channelForm.get
     pusherClient.channel(channel, Some(Seq("user_count"))).map { res => Ok(Json.toJson(res.toJson.toString)) }
   }
 
-  def channelsAction = Action.async { implicit request =>
+  def channelsAction = Action.async(parse.json) { implicit request =>
     val (prefix) = channelsForm.get
     pusherClient.channels(prefix, Some(Seq("user_count"))).map { res => Ok(Json.toJson(res.toJson.toString)) }
   }
 
-  def usersAction = Action.async { implicit request =>
+  def usersAction = Action.async(parse.json) { implicit request =>
     val (channel) = usersForm.get
     pusherClient.users(channel).map { res => Ok(Json.toJson(res.toJson.toString)) }
   }
