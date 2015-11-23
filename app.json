@@ -1,0 +1,11 @@
+{
+  "name": "akka-pusher-play-app",
+  "description": "A sample Play framework app using akka-pusher.",
+  "website": "https://github.com/dtaniwaki/akka-pusher-play-app",
+  "success_url": "/pusher",
+  "addons": [],
+  "env": {
+  },
+  "scripts": {
+  }
+}
