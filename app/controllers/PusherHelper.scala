@@ -9,7 +9,7 @@ trait PusherHelper {
   protected lazy val logger = LoggerFactory.getLogger(getClass)
 
   protected val authForm = Form(mapping("socket_id" -> text, "channel_name" -> text)(AuthRequest.apply)(AuthRequest.unapply))
-  protected val triggerForm = Form(tuple("channel" -> text, "event" -> text, "body" -> text))
+  protected val triggerForm = Form(tuple("channel" -> text, "event" -> text, "body" -> text, "socket_id" -> optional(text)))
   protected val channelForm = Form("channel" -> text)
   protected val channelsForm = Form("prefix" -> text)
   protected val usersForm = Form("channel" -> text)

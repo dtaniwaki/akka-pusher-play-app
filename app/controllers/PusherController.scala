@@ -42,22 +42,22 @@ class PusherController extends Controller
   }
 
   def triggerAction = Action.async(parse.json) { implicit request =>
-    val (channel, event, body) = triggerForm.get
-    pusherClient.trigger(channel, event, body).map { res => Ok(Json.toJson(res.toJson.toString)) }
+    val (channel, event, body, socketId) = triggerForm.bindFromRequest.get
+    pusherClient.trigger(channel, event, body, socketId).map { res => Ok(Json.parse(res.toJson.toString)) }
   }
 
   def channelAction = Action.async(parse.json) { implicit request =>
-    val (channel) = channelForm.get
-    pusherClient.channel(channel, Some(Seq("user_count"))).map { res => Ok(Json.toJson(res.toJson.toString)) }
+    val (channel) = channelForm.bindFromRequest.get
+    pusherClient.channel(channel, Some(Seq("user_count"))).map { res => Ok(Json.parse(res.toJson.toString)) }
   }
 
   def channelsAction = Action.async(parse.json) { implicit request =>
-    val (prefix) = channelsForm.get
-    pusherClient.channels(prefix, Some(Seq("user_count"))).map { res => Ok(Json.toJson(res.toJson.toString)) }
+    val (prefix) = channelsForm.bindFromRequest.get
+    pusherClient.channels(prefix, Some(Seq("user_count"))).map { res => Ok(Json.parse(res.toJson.toString)) }
   }
 
   def usersAction = Action.async(parse.json) { implicit request =>
-    val (channel) = usersForm.get
-    pusherClient.users(channel).map { res => Ok(Json.toJson(res.toJson.toString)) }
+    val (channel) = usersForm.bindFromRequest.get
+    pusherClient.users(channel).map { res => Ok(Json.parse(res.toJson.toString)) }
   }
 }

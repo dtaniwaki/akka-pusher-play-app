@@ -54,28 +54,28 @@ class PusherActorController @Inject() (implicit system: ActorSystem) extends Con
   }
 
   def triggerAction = Action.async(parse.json) { implicit request =>
-    val (channel, event, body) = triggerForm.get
-    (pusherActor ask TriggerMessage(channel, event, body.toJson)).map { case ResponseMessage(res: PusherModels.Result) => Ok(Json.toJson(res.toJson.toString)) }
+    val (channel, event, body, socketId) = triggerForm.bindFromRequest.get
+    (pusherActor ask TriggerMessage(channel, event, body.toJson, socketId)).map { case ResponseMessage(res: PusherModels.Result) => Ok(Json.parse(res.toJson.toString)) }
   }
 
   def channelAction = Action.async(parse.json) { implicit request =>
-    val (channel) = channelForm.get
-    (pusherActor ask ChannelMessage(channel, Some(Seq("user_count")))).map { case ResponseMessage(res: PusherModels.Channel) => Ok(Json.toJson(res.toJson.toString)) }
+    val (channel) = channelForm.bindFromRequest.get
+    (pusherActor ask ChannelMessage(channel, Some(Seq("user_count")))).map { case ResponseMessage(res: PusherModels.Channel) => Ok(Json.parse(res.toJson.toString)) }
   }
 
   def channelsAction = Action.async(parse.json) { implicit request =>
-    val (prefix) = channelsForm.get
+    val (prefix) = channelsForm.bindFromRequest.get
     (pusherActor ask ChannelsMessage(prefix, Some(Seq("user_count")))).map {
       case ResponseMessage(res: Map[_, _]) if res.forall{ case (k, v) => k.isInstanceOf[String] && v.isInstanceOf[PusherModels.Channel] } =>
         res.asInstanceOf[Map[String, PusherModels.Channel]]
-    }.map { res => Ok(Json.toJson(res.toJson.toString)) }
+    }.map { res => Ok(Json.parse(res.toJson.toString)) }
   }
 
   def usersAction = Action.async(parse.json) { implicit request =>
-    val (channel) = usersForm.get
+    val (channel) = usersForm.bindFromRequest.get
     (pusherActor ask UsersMessage(channel)).map {
       case ResponseMessage(res: List[_]) if res.forall(_.isInstanceOf[PusherModels.User]) =>
         res.asInstanceOf[List[PusherModels.User]]
-    }.map { res => Ok(Json.toJson(res.toJson.toString)) }
+    }.map { res => Ok(Json.parse(res.toJson.toString)) }
   }
 }
