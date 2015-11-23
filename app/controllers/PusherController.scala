@@ -15,28 +15,30 @@ class PusherController extends Controller
   val pusherClient: PusherClient = new PusherClient()
 
   def authAction = Action(parse.urlFormEncoded) { implicit request =>
-    val key = request.headers.get("X-Pusher-Key").get
-    val signature = request.headers.get("X-Pusher-Signature").get
-    val pusherRequest = Json.stringify(Json.toJson(request.body.toMap)).parseJson.convertTo[AuthRequest]
+    val pusherRequest = Json.stringify(Json.toJson(request.body.toMap.mapValues(_(0)))).parseJson.convertTo[AuthRequest]
 
-    if (pusherClient.validateSignature(key, signature, request.body.toString)) {
-      val res = pusherClient.authenticate(
-        pusherRequest.channelName,
-        pusherRequest.socketId,
-        Some(ChannelData(userId = "dtaniwaki", userInfo = Some(Map("user_name" -> "dtaniwaki", "name" -> "Daisuke Taniwaki"))))
-      )
-      Ok(Json.toJson(res.toJson.toString))
-    } else {
-      Unauthorized(Json.toJson("{}"))
-    }
+    val res = pusherClient.authenticate(
+      pusherRequest.channelName,
+      pusherRequest.socketId,
+      Some(ChannelData(userId = "dtaniwaki", userInfo = Some(Map("user_name" -> "dtaniwaki", "name" -> "Daisuke Taniwaki"))))
+    )
+    Ok(Json.parse(res.toJson.toString))
   }
 
   def webhookAction = Action(parse.json) { implicit request =>
-    Json.stringify(request.body).parseJson.convertTo[WebhookRequest].events foreach {
-      case event =>
-        logger.warn(s"Got event: $event")
+    val key = request.headers.get("X-Pusher-Key").get
+    val signature = request.headers.get("X-Pusher-Signature").get
+
+    if (pusherClient.validateSignature(key, signature, request.body.toString)) {
+      val webhookRequest = Json.stringify(request.body).parseJson.convertTo[WebhookRequest]
+      webhookRequest.events foreach {
+        case event =>
+          logger.warn(s"Got event: $event")
+      }
+      Ok(Json.toJson("{}"))
+    } else {
+      Unauthorized(Json.toJson("{}"))
     }
-    Ok(Json.toJson("{}"))
   }
 
   def triggerAction = Action.async(parse.json) { implicit request =>

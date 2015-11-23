@@ -23,33 +23,34 @@ class PusherActorController @Inject() (implicit system: ActorSystem) extends Con
   implicit val timeout = Timeout(5 seconds)
 
   def authAction = Action.async(parse.urlFormEncoded) { implicit request =>
-    val key = request.headers.get("X-Pusher-Key").get
-    val signature = request.headers.get("X-Pusher-Signature").get
     val pusherRequest = Json.stringify(Json.toJson(request.body.toMap)).parseJson.convertTo[AuthRequest]
 
-    (pusherActor ask ValidateSignatureMessage(key, signature, request.body.toString)).flatMap {
-      case ResponseMessage(true) =>
-        (pusherActor ask AuthenticateMessage(
-          pusherRequest.channelName,
-          pusherRequest.socketId,
-          Some(PusherModels.ChannelData(userId = "dtaniwaki", userInfo = Some(Map("user_name" -> "dtaniwaki", "name" -> "Daisuke Taniwaki").toJson)))
-        )).map {
-          case ResponseMessage(res: PusherModels.AuthenticatedParams) =>
-            Ok(Json.toJson(res.toJson.toString))
-        }
-      case ResponseMessage(false) =>
-        Future(Unauthorized("{}"))
-      case _ =>
-        throw new RuntimeException("Unknown response from pusher")
+    (pusherActor ask AuthenticateMessage(
+      pusherRequest.channelName,
+      pusherRequest.socketId,
+      Some(PusherModels.ChannelData(userId = "dtaniwaki", userInfo = Some(Map("user_name" -> "dtaniwaki", "name" -> "Daisuke Taniwaki").toJson)))
+    )).map {
+      case ResponseMessage(res: PusherModels.AuthenticatedParams) =>
+        Ok(Json.parse(res.toJson.toString))
     }
   }
 
   def webhookAction = Action.async(parse.json) { implicit request =>
-    Json.stringify(request.body).parseJson.convertTo[WebhookRequest].events foreach {
-      case event =>
-        logger.warn(s"Got event: $event")
+    val key = request.headers.get("X-Pusher-Key").get
+    val signature = request.headers.get("X-Pusher-Signature").get
+    (pusherActor ask ValidateSignatureMessage(key, signature, request.body.toString)).flatMap {
+      case ResponseMessage(true) =>
+        val webhookRequest = Json.stringify(request.body).parseJson.convertTo[WebhookRequest]
+        webhookRequest.events foreach {
+          case event =>
+            logger.warn(s"Got event: $event")
+        }
+        Future(Ok(Json.toJson("{}")))
+      case ResponseMessage(false) =>
+        Future(Unauthorized(Json.toJson("{}")))
+      case _ =>
+        throw new RuntimeException("Unknown response from pusher")
     }
-    Future(Ok(Json.toJson("{}")))
   }
 
   def triggerAction = Action.async(parse.json) { implicit request =>
