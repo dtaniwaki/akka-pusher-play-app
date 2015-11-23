@@ -21,18 +21,26 @@
   <script>
     $(function() {
       var subscribe = function(channelName, eventName) {
-        var channel = pusher.subscribe(channelName);
-        channel.bind(eventName, function(data) {
-          $("#messagesTable").prepend("<li class=\"list-group-item\">" + data + "</li>");
-        });
       };
+      var unsubscribe = function(channelName, eventName) {
+        var channel = pusher.unsubscribe(channelName);
+      }
 
+      var channel;
       $("#subscriptionForm").submit(function(e) {
         e.preventDefault();
         var $form = $(this);
         var channelName = $form.find("#subscriptionFormChannel").val();
         var eventName = $form.find("#subscriptionFormEvent").val();
-        subscribe(channelName, eventName);
+        if (!channel || channel.name !== channelName) {
+          if (channel && channel.name !== channelName) {
+            pusher.unsubscribe(channel.name);
+          }
+          channel = pusher.subscribe(channelName);
+          channel.bind("chat", function(data) {
+            $("#messagesTable").prepend("<li class=\"list-group-item\">" + data + "</li>");
+          });
+        }
         $("#messagesTable").html("");
         alert("Successfully subscribe the channel and event.");
       });
