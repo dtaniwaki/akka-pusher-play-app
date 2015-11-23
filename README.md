@@ -3,7 +3,7 @@
 [![CI][ci-image]][ci-link]
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-This is the sample Play framework app using [akka-pusher](/dtaniwaki/akka-pusher).
+This is the sample Play framework app using [akka-pusher](https://github.com/dtaniwaki/akka-pusher).
 
 ```bash
 export PUSHER_APP_ID="YOUR APP ID"
