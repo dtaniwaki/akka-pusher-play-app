@@ -21,3 +21,19 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
+
+// For sbt-native-packager
+javaOptions in Universal ++= Seq(
+  // JVM memory tuning
+  "-J-Xmx1024m",
+  "-J-Xms512m",
+
+  // Since play uses separate pidfile we have to provide it with a proper path
+  s"-Dpidfile.path=/var/run/${packageName.value}/play.pid",
+
+  // Use separate configuration file for production environment
+  s"-Dconfig.file=/usr/share/${packageName.value}/conf/application.conf",
+
+  // Use separate logger configuration file for production environment
+  s"-Dlogger.file=/usr/share/${packageName.value}/conf/logback.xml"
+)
