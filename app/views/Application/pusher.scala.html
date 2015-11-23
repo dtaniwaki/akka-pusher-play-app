@@ -1,0 +1,96 @@
+@(key: String)
+
+@main("Akka Pusher") {
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+  <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
+  <script>
+    // Enable pusher logging - don't include this in production
+    Pusher.log = function(message) {
+      if (window.console && window.console.log) {
+        window.console.log(message);
+      }
+    };
+
+    var pusher = new Pusher("@key", {
+      encrypted: true
+    });
+  </script>
+
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script>
+    $(function() {
+      var subscribe = function(channelName, eventName) {
+        var channel = pusher.subscribe(channelName);
+        channel.bind(eventName, function(data) {
+          $("#messagesTable").append("<li class=\"list-group-item\">" + data + "</li>");
+        });
+        $("#subscribingChannel").text(channelName);
+        $("#bindingEvent").text(eventName);
+      };
+      subscribe("private-test_channel", "my_event");
+
+      $("#triggerForm").submit(function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        var formData = { "socket_id": pusher.connection.socket_id }
+        $.each($form.serializeArray(), function(idx) {
+          formData[this.name] = this.value;
+        });
+        $.ajax({
+          url: $form.attr("action"),
+          type: "POST",
+          data: JSON.stringify(formData),
+          dataType: "json",
+          contentType: "application/json"
+        });
+      });
+    });
+  </script>
+} {
+  <div class="container">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <h1>akka-pusher-play-app</h1>
+        </div>
+      </div>
+    </nav>
+
+    <div class="col-md-6">
+      <h2 id="triggerFormHead">Trigger</h2>
+      <form action="/pusher/trigger" method="post" id="triggerForm">
+        <div class="form-group">
+          <label for="triggerFormChannel">Channel</label>
+          <input type="text" name="channel" value="private-test_channel" id="triggerFormChannel" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="triggerFormEvent">Event</label>
+          <input type="text" name="event" value="my_event" id="triggerFormEvent" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="triggerFormBody">Body</label>
+          <input type="text" name="body" value="hello" id="triggerFormBody" class="form-control">
+        </div>
+        <input type="submit" name="submit" value="Submit" class="btn btn-default">
+      </form>
+    </div>
+
+    <div class="col-md-6">
+      <h2 id="subscription">Subscription</h2>
+      <table class="table table-striped">
+        <tr>
+          <th>Subscribing</th>
+          <td id="subscribingChannel"></td>
+        </tr>
+        <tr>
+          <th>Binding</th>
+          <td id="bindingEvent"></td>
+        </tr>
+      </table>
+      <h3 id="messages">Messages</h3>
+      <ul class="list-group" id="messagesTable">
+      </ul>
+    </div>
+  </div>
+}
