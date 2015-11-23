@@ -23,7 +23,7 @@
       var subscribe = function(channelName, eventName) {
         var channel = pusher.subscribe(channelName);
         channel.bind(eventName, function(data) {
-          $("#messagesTable").append("<li class=\"list-group-item\">" + data + "</li>");
+          $("#messagesTable").prepend("<li class=\"list-group-item\">" + data + "</li>");
         });
         $("#subscribingChannel").text(channelName);
         $("#bindingEvent").text(eventName);
