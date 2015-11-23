@@ -1,5 +1,8 @@
 # akka-pusher-play-app
 
+[![CI][ci-image]][ci-link]
+[![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 This is the sample Play framework app using [akka-pusher](/dtaniwaki/akka-pusher).
 
 ```bash
@@ -19,3 +22,17 @@ If you want to try the app by yourself,
 
 You need to set the required environment variables above in Heroku as well.
 
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new [Pull Request](../../pull/new/master)
+
+## Copyright
+
+Copyright (c) 2015 Daisuke Taniwaki. See [LICENSE](LICENSE) for details.
+
+[ci-image]:  https://travis-ci.org/dtaniwaki/akka-pusher-play-app.svg?branch=use-travis
+[ci-link]:   https://travis-ci.org/dtaniwaki/akka-pusher-play-app
