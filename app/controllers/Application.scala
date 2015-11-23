@@ -10,7 +10,11 @@ class Application extends Controller {
   }
 
   def pusher = Action {
-    Ok(views.html.Application.pusher(Play.current.configuration.getString("pusher.key").get.trim))
+    Ok(views.html.Application.pusher(Play.current.configuration.getString("pusher.key").get.trim)("pusher"))
+  }
+
+  def pusherActor = Action {
+    Ok(views.html.Application.pusher(Play.current.configuration.getString("pusher.key").get.trim)("pusher_actor"))
   }
 
 }

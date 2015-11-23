@@ -5,6 +5,7 @@
 # Home page
 GET     /                           controllers.Application.index
 GET     /pusher                     controllers.Application.pusher
+GET     /pusher_actor               controllers.Application.pusherActor
 
 POST    /pusher/auth                controllers.PusherController.authAction
 POST    /pusher/webhook             controllers.PusherController.webhookAction
