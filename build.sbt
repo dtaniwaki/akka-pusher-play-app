@@ -11,7 +11,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   //"io.spray"             %%  "spray-json"    % "1.3.2",
-  "com.github.dtaniwaki" %%  "akka-pusher"   % "0.1.4",
+  "com.github.dtaniwaki" %%  "akka-pusher"   % "0.1.7",
   //"com.typesafe.akka"    %%  "akka-slf4j"    % "2.3.14",
   specs2 % Test
 )
