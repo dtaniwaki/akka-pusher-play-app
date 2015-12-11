@@ -39,7 +39,7 @@
         alert("Successfully subscribe the channel and event.");
       });
 
-      $("#triggerForm").submit(function(e) {
+      $("#triggerForm, #channelForm, #channelsForm, #usersForm").submit(function(e) {
         e.preventDefault();
         var $form = $(this);
         var formData = { "socket_id": pusher.connection.socket_id }
@@ -52,8 +52,10 @@
           data: JSON.stringify(formData),
           dataType: "json",
           contentType: "application/json"
-        }).done(function(){
-          alert("The message has been sent.");
+        }).done(function(data, textStatus, jqXHR){
+          alert(JSON.stringify(data));
+        }).fail(function(jqXHR, textStatus, errorThrown){
+          alert(jqXHR.responseText);
         });
       });
     });
@@ -84,6 +86,30 @@
         <div class="form-group">
           <label for="triggerFormBody">Body</label>
           <input type="text" name="body" placeholder="hello" id="triggerFormBody" class="form-control">
+        </div>
+        <input type="submit" name="submit" value="Submit" class="btn btn-default">
+      </form>
+      <h2 id="channelFormHead">Channel</h2>
+      <form action="/@endpoint/channel" method="post" id="channelForm">
+        <div class="form-group">
+          <label for="channelFormChannel">Channel</label>
+          <input type="text" name="channel" placeholder="test-channel" id="channelFormPrefix" class="form-control">
+        </div>
+        <input type="submit" name="submit" value="Submit" class="btn btn-default">
+      </form>
+      <h2 id="channelsFormHead">Channels</h2>
+      <form action="/@endpoint/channels" method="post" id="channelsForm">
+        <div class="form-group">
+          <label for="channelsFormPrefix">Prefix</label>
+          <input type="text" name="prefix" placeholder="test-" id="channelsFormPrefix" class="form-control">
+        </div>
+        <input type="submit" name="submit" value="Submit" class="btn btn-default">
+      </form>
+      <h2 id="usersFormHead">Channel</h2>
+      <form action="/@endpoint/users" method="post" id="usersForm">
+        <div class="form-group">
+          <label for="usersFormChannel">Channel</label>
+          <input type="text" name="channel" placeholder="test-users" id="usersFormPrefix" class="form-control">
         </div>
         <input type="submit" name="submit" value="Submit" class="btn btn-default">
       </form>
