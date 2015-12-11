@@ -24,14 +24,14 @@ class PusherActorController @Inject() (implicit system: ActorSystem) extends Con
   implicit val timeout = Timeout(5 seconds)
 
   def authAction = Action.async(parse.urlFormEncoded) { implicit request =>
-    val pusherRequest = Json.stringify(Json.toJson(request.body.toMap)).parseJson.convertTo[AuthRequest]
+    val pusherRequest = Json.stringify(Json.toJson(request.body.toMap.mapValues(_(0)))).parseJson.convertTo[AuthRequest]
 
     (pusherActor ask AuthenticateMessage(
       pusherRequest.channelName,
       pusherRequest.socketId,
       Some(PusherModels.ChannelData(userId = "dtaniwaki", userInfo = Some(Map("user_name" -> "dtaniwaki", "name" -> "Daisuke Taniwaki").toJson)))
     )).map {
-      case Success(res: PusherModels.AuthenticatedParams) =>
+      case res: PusherModels.AuthenticatedParams =>
         Ok(Json.parse(res.toJson.toString))
     }
   }
