@@ -7,6 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json.Json
 import play.api.mvc._
 import spray.json._
+import scala.util.{Success, Failure}
 
 class PusherController extends Controller
   with PusherHelper
@@ -42,22 +43,41 @@ class PusherController extends Controller
   }
 
   def triggerAction = Action.async(parse.json) { implicit request =>
-    val (channel, event, body, socketId) = triggerForm.bindFromRequest.get
-    pusherClient.trigger(channel, event, body, socketId).map { res => Ok(Json.parse(res.toJson.toString)) }
+    val (channel, event, body, socketId, batch) = triggerForm.bindFromRequest.get
+    if (batch.getOrElse(false)) {
+      pusherClient.trigger(Seq((channel, event, body, socketId))).map {
+        case Success(res) => Ok(Json.parse(res.toJson.toString))
+        case Failure(e) => InternalServerError(e.getMessage)
+      }
+    } else {
+      pusherClient.trigger(channel, event, body, socketId).map {
+        case Success(res) => Ok(Json.parse(res.toJson.toString))
+        case Failure(e) => InternalServerError(e.getMessage)
+      }
+    }
   }
 
   def channelAction = Action.async(parse.json) { implicit request =>
     val (channel) = channelForm.bindFromRequest.get
-    pusherClient.channel(channel, Some(Seq("user_count"))).map { res => Ok(Json.parse(res.toJson.toString)) }
+    pusherClient.channel(channel, Some(Seq("user_count"))).map {
+      case Success(res) => Ok(Json.parse(res.toJson.toString))
+      case Failure(e) => InternalServerError(e.getMessage)
+    }
   }
 
   def channelsAction = Action.async(parse.json) { implicit request =>
     val (prefix) = channelsForm.bindFromRequest.get
-    pusherClient.channels(prefix, Some(Seq("user_count"))).map { res => Ok(Json.parse(res.toJson.toString)) }
+    pusherClient.channels(prefix, Some(Seq("user_count"))).map {
+      case Success(res) => Ok(Json.parse(res.toJson.toString))
+      case Failure(e) => InternalServerError(e.getMessage)
+    }
   }
 
   def usersAction = Action.async(parse.json) { implicit request =>
     val (channel) = usersForm.bindFromRequest.get
-    pusherClient.users(channel).map { res => Ok(Json.parse(res.toJson.toString)) }
+    pusherClient.users(channel).map {
+      case Success(res) => Ok(Json.parse(res.toJson.toString))
+      case Failure(e) => InternalServerError(e.getMessage)
+    }
   }
 }
