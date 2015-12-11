@@ -66,12 +66,15 @@
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
-          <h1><a href="https://github.com/dtaniwaki/akka-pusher-play-app" target="_blank">akka-pusher-play-app</a></h1>
+          <h1><a href="https://github.com/dtaniwaki/akka-pusher-play-app" target="_blank">akka-pusher-play-app</a> (@endpoint)</h1>
         </div>
       </div>
     </nav>
 
-    <div class="well">You can <a href="/@endpoint" target="_blank">open this page in multiple tabs.</a> This page will not receive the messages sent from this page. :)</div>
+    <div class="well">
+      You can open this page in multiple tabs. This page will not receive the messages sent from itself. :)<br>
+      <a href="/pusher_actor" target="_blank">Actor Client (pusher_actor)</a> / <a href="/pusher" target="_blank">Non-Actor Client (pusher)</a>
+    </div>
 
     <div class="col-md-6">
       <h2 id="triggerFormHead">Trigger</h2>
