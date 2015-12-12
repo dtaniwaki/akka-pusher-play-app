@@ -56,16 +56,11 @@ class PusherActorController @Inject() (implicit system: ActorSystem) extends Con
   }
 
   def triggerAction = Action.async(parse.json) { implicit request =>
-    val (channel, event, body, socketId, batch) = triggerForm.bindFromRequest.get
-    if (batch.getOrElse(false)) {
-      (pusherActor ask BatchTriggerMessage(channel, event, body.toJson, socketId)).map {
-        case true => Ok(Json.parse(true.toJson.toString))
-      }
-    } else {
-      (pusherActor ask TriggerMessage(channel, event, body.toJson, socketId)).map {
-        case Success(res: PusherModels.Result) => Ok(Json.parse(res.toJson.toString))
-        case Failure(e) => InternalServerError(e.getMessage)
-      }
+    val (channel, event, body, socketId) = triggerForm.bindFromRequest.get
+    (pusherActor ask TriggerMessage(channel, event, body.toJson, socketId)).map {
+      case Success(res: PusherModels.Result) => Ok(Json.parse(res.toJson.toString))
+      case Failure(e) => InternalServerError(e.getMessage)
+      case _ => Ok(Json.parse("{}"))
     }
   }
 

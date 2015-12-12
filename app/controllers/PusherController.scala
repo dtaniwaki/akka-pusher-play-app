@@ -43,17 +43,10 @@ class PusherController extends Controller
   }
 
   def triggerAction = Action.async(parse.json) { implicit request =>
-    val (channel, event, body, socketId, batch) = triggerForm.bindFromRequest.get
-    if (batch.getOrElse(false)) {
-      pusherClient.trigger(Seq((channel, event, body, socketId))).map {
-        case Success(res) => Ok(Json.parse(res.toJson.toString))
-        case Failure(e) => InternalServerError(e.getMessage)
-      }
-    } else {
-      pusherClient.trigger(channel, event, body, socketId).map {
-        case Success(res) => Ok(Json.parse(res.toJson.toString))
-        case Failure(e) => InternalServerError(e.getMessage)
-      }
+    val (channel, event, body, socketId) = triggerForm.bindFromRequest.get
+    pusherClient.trigger(channel, event, body, socketId).map {
+      case Success(res) => Ok(Json.parse(res.toJson.toString))
+      case Failure(e) => InternalServerError(e.getMessage)
     }
   }
 
