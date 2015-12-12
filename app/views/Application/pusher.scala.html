@@ -21,6 +21,17 @@
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script>
     $(function() {
+      // This is the script to use different channel from other people who is trying to examine this app
+      var randomString;
+      var m = document.cookie.match(new RegExp("chat_channel_postfix=([^;]*)"));
+      if (m) {
+        randomString = m[1];
+      } else {
+        randomString = (Math.random() + 1).toString(36).substring(7);
+        document.cookie = "chat_channel_postfix=" + randomString;
+      }
+      $("#subscriptionFormChannel, #triggerFormChannel").val("private-test_channel_" + randomString);
+
       var channel;
       $("#subscriptionForm").submit(function(e) {
         e.preventDefault();
@@ -82,15 +93,15 @@
       <form action="/@endpoint/trigger" method="post" id="triggerForm">
         <div class="form-group">
           <label for="triggerFormChannel">Channel</label>
-          <input type="text" name="channel" placeholder="private-test_channel" id="triggerFormChannel" class="form-control">
+          <input type="text" name="channel" value="private-test_channel" id="triggerFormChannel" class="form-control">
         </div>
         <div class="form-group">
           <label for="triggerFormEvent">Event</label>
-          <input type="text" name="event" placeholder="my_event" id="triggerFormEvent" class="form-control">
+          <input type="text" name="event" value="chat" id="triggerFormEvent" class="form-control">
         </div>
         <div class="form-group">
           <label for="triggerFormBody">Body</label>
-          <input type="text" name="body" placeholder="hello" id="triggerFormBody" class="form-control">
+          <input type="text" name="body" value="hello" id="triggerFormBody" class="form-control">
         </div>
         <input type="submit" name="submit" value="Submit" class="btn btn-default">
         <div class="checkbox">
@@ -127,11 +138,17 @@
     </div>
 
     <div class="col-md-6">
+      <ol>
+        <li>Subscribe a channel from <b>Subscription</b> section</li>
+        <li>Open <a href="/@endpoint" target="_blank">this page on another tab</a></li>
+        <li>Send messages from <b>Trigger</b> section of the first tab</li>
+        <li>Check the second tab for the messages</li>
+      </ol>
       <h2 id="subscription">Subscription</h2>
       <form action="#" method="post" id="subscriptionForm">
         <div class="form-group">
           <label for="subscriptionFormChannel">Channel</label>
-          <input type="text" name="channel" placeholder="private-test_channel" id="subscriptionFormChannel" class="form-control">
+          <input type="text" name="channel" value="private-test_channel" id="subscriptionFormChannel" class="form-control">
         </div>
         <div class="form-group">
           <label for="subscriptionFormEvent">Event</label>
