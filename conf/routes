@@ -4,9 +4,8 @@
 
 # Home page
 GET     /                           controllers.RootController.index
-GET     /pusher                     controllers.RootController.pusher
-GET     /pusher_actor               controllers.RootController.pusherActor
 
+GET     /pusher                     controllers.PusherController.index
 POST    /pusher/auth                controllers.PusherController.authAction
 POST    /pusher/webhook             controllers.PusherController.webhookAction
 POST    /pusher/trigger             controllers.PusherController.triggerAction
@@ -14,6 +13,7 @@ POST    /pusher/channel             controllers.PusherController.channelAction
 POST    /pusher/channels            controllers.PusherController.channelsAction
 POST    /pusher/users               controllers.PusherController.usersAction
 
+GET     /pusher_actor                     controllers.PusherActorController.index
 POST    /pusher_actor/auth                controllers.PusherActorController.authAction
 POST    /pusher_actor/webhook             controllers.PusherActorController.webhookAction
 POST    /pusher_actor/trigger             controllers.PusherActorController.triggerAction

@@ -1,19 +1,26 @@
 package controllers
 
+import javax.inject.Inject
+
 import com.github.dtaniwaki.akka_pusher.PusherModels.ChannelData
 import com.github.dtaniwaki.akka_pusher.PusherRequests._
 import com.github.dtaniwaki.akka_pusher.{PusherClient, PusherJsonSupport}
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.{Configuration, Play}
 import play.api.libs.json.Json
 import play.api.mvc._
 import spray.json._
 import scala.util.{Success, Failure}
 
-class PusherController extends Controller
+class PusherController @Inject()(config: Configuration = Play.current.configuration) extends Controller
   with PusherHelper
   with PusherJsonSupport
 {
   val pusherClient: PusherClient = new PusherClient()
+
+  def index = Action {
+    Ok(views.html.shared.pusher(config.getString("pusher.key").get.trim)("pusher"))
+  }
 
   def authAction = Action(parse.urlFormEncoded) { implicit request =>
     val pusherRequest = Json.stringify(Json.toJson(request.body.toMap.mapValues(_(0)))).parseJson.convertTo[AuthRequest]

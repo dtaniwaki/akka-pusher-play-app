@@ -9,12 +9,4 @@ class RootController extends Controller {
     Ok("OK")
   }
 
-  def pusher = Action {
-    Ok(views.html.Application.pusher(Play.current.configuration.getString("pusher.key").get.trim)("pusher"))
-  }
-
-  def pusherActor = Action {
-    Ok(views.html.Application.pusher(Play.current.configuration.getString("pusher.key").get.trim)("pusher_actor"))
-  }
-
 }

@@ -10,18 +10,23 @@ import com.github.dtaniwaki.akka_pusher.PusherRequests._
 import com.github.dtaniwaki.akka_pusher.{PusherModels, PusherActor, PusherJsonSupport}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.{Configuration, Play}
 import play.api.libs.json.Json
 import play.api.mvc._
 import spray.json._
 import scala.concurrent.Future
 import scala.util.{Success, Failure}
 
-class PusherActorController @Inject() (implicit system: ActorSystem) extends Controller
+class PusherActorController @Inject()(config: Configuration = Play.current.configuration)(implicit system: ActorSystem) extends Controller
   with PusherHelper
   with PusherJsonSupport
 {
   val pusherActor: ActorRef = system.actorOf(PusherActor.props, "pusher-actor")
   implicit val timeout = Timeout(5 seconds)
+
+  def index = Action {
+    Ok(views.html.shared.pusher(config.getString("pusher.key").get.trim)("pusher_actor"))
+  }
 
   def authAction = Action.async(parse.urlFormEncoded) { implicit request =>
     val pusherRequest = Json.stringify(Json.toJson(request.body.toMap.mapValues(_(0)))).parseJson.convertTo[AuthRequest]
