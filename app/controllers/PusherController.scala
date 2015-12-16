@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
+import com.github.dtaniwaki.akka_pusher.attributes.{PusherChannelAttributes, PusherChannelsAttributes}
 import com.github.dtaniwaki.akka_pusher.PusherModels.ChannelData
 import com.github.dtaniwaki.akka_pusher.PusherRequests._
 import com.github.dtaniwaki.akka_pusher.{PusherClient, PusherJsonSupport}
@@ -59,7 +60,7 @@ class PusherController @Inject()(config: Configuration = Play.current.configurat
 
   def channelAction = Action.async(parse.json) { implicit request =>
     val (channel) = channelForm.bindFromRequest.get
-    pusherClient.channel(channel, Some(Seq("user_count"))).map {
+    pusherClient.channel(channel, Seq(PusherChannelAttributes.userCount)).map {
       case Success(res) => Ok(Json.parse(res.toJson.toString))
       case Failure(e) => InternalServerError(e.getMessage)
     }
@@ -67,7 +68,7 @@ class PusherController @Inject()(config: Configuration = Play.current.configurat
 
   def channelsAction = Action.async(parse.json) { implicit request =>
     val (prefix) = channelsForm.bindFromRequest.get
-    pusherClient.channels(prefix, Some(Seq("user_count"))).map {
+    pusherClient.channels(prefix, Seq(PusherChannelsAttributes.userCount)).map {
       case Success(res) => Ok(Json.parse(res.toJson.toString))
       case Failure(e) => InternalServerError(e.getMessage)
     }

@@ -5,6 +5,7 @@ import javax.inject.Inject
 import akka.actor.{ActorSystem, ActorRef}
 import akka.pattern.ask
 import akka.util.Timeout
+import com.github.dtaniwaki.akka_pusher.attributes.{PusherChannelAttributes, PusherChannelsAttributes}
 import com.github.dtaniwaki.akka_pusher.PusherMessages._
 import com.github.dtaniwaki.akka_pusher.PusherRequests._
 import com.github.dtaniwaki.akka_pusher.{PusherModels, PusherActor, PusherJsonSupport}
@@ -71,7 +72,7 @@ class PusherActorController @Inject()(config: Configuration = Play.current.confi
 
   def channelAction = Action.async(parse.json) { implicit request =>
     val (channel) = channelForm.bindFromRequest.get
-    (pusherActor ask ChannelMessage(channel, Some(Seq("user_count")))).map {
+    (pusherActor ask ChannelMessage(channel, Seq(PusherChannelAttributes.userCount))).map {
       case Success(res: PusherModels.Channel) => Ok(Json.parse(res.toJson.toString))
       case Failure(e) => InternalServerError(e.getMessage)
     }
@@ -79,9 +80,9 @@ class PusherActorController @Inject()(config: Configuration = Play.current.confi
 
   def channelsAction = Action.async(parse.json) { implicit request =>
     val (prefix) = channelsForm.bindFromRequest.get
-    (pusherActor ask ChannelsMessage(prefix, Some(Seq("user_count")))).map {
-      case Success(res: Map[_, _]) if res.forall{ case (k, v) => k.isInstanceOf[String] && v.isInstanceOf[PusherModels.Channel] } =>
-        Ok(Json.parse(res.asInstanceOf[Map[String, PusherModels.Channel]].toJson.toString))
+    (pusherActor ask ChannelsMessage(prefix, Seq(PusherChannelsAttributes.userCount))).map {
+      case Success(res: PusherModels.ChannelMap) =>
+        Ok(Json.parse(res.toJson.toString))
       case Failure(e) => InternalServerError(e.getMessage)
     }
   }
@@ -89,8 +90,8 @@ class PusherActorController @Inject()(config: Configuration = Play.current.confi
   def usersAction = Action.async(parse.json) { implicit request =>
     val (channel) = usersForm.bindFromRequest.get
     (pusherActor ask UsersMessage(channel)).map {
-      case Success(res: List[_]) if res.forall(_.isInstanceOf[PusherModels.User]) =>
-        Ok(Json.parse(res.asInstanceOf[List[PusherModels.User]].toJson.toString))
+      case Success(res: PusherModels.UserList) =>
+        Ok(Json.parse(res.toJson.toString))
       case Failure(e) => InternalServerError(e.getMessage)
     }
   }

@@ -92,7 +92,7 @@ object PusherControllerSpec extends PlaySpecification with Results {
           )
         ))
         val bodyText: String = contentAsString(result)
-        Json.parse(bodyText) must be equalTo Json.arr()
+        Json.parse(bodyText) must be equalTo Json.obj("users" -> Json.arr())
       }
     }
   } else {
