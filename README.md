@@ -16,6 +16,8 @@ And access http://localhost:9000/pusher
 
 Working sample is [available on Heroku](https://akka-pusher-play-app.herokuapp.com/pusher).
 
+[![screenshot](misc/screenshot.png)](https://akka-pusher-play-app.herokuapp.com/pusher)
+
 If you want to try the app by yourself,
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/dtaniwaki/akka-pusher-play-app)
