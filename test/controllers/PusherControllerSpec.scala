@@ -9,7 +9,6 @@ import com.typesafe.config.{ Config, ConfigFactory }
 
 object PusherControllerSpec extends PlaySpecification with Results {
   val config = Configuration(ConfigFactory.load())
-  val controller = new PusherController(config)
 
   "#index" should {
     "should be valid" in {
@@ -19,6 +18,7 @@ object PusherControllerSpec extends PlaySpecification with Results {
     }
   }
   if(config.getString("pusher.appId").isDefined && config.getString("pusher.appId").get.nonEmpty) {
+    val controller = new PusherController(config)
     "#trigger" should {
       "should be valid" in {
         val result: Future[Result] = controller.triggerAction().apply(FakeRequest(
