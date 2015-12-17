@@ -36,5 +36,5 @@ You need to set the required environment variables above in Heroku as well.
 
 Copyright (c) 2015 Daisuke Taniwaki. See [LICENSE](LICENSE) for details.
 
-[ci-image]:  https://travis-ci.org/dtaniwaki/akka-pusher-play-app.svg
-[ci-link]:   https://travis-ci.org/dtaniwaki/akka-pusher-play-app
+[ci-image]:  https://travis-ci.org/dtaniwaki/akka-pusher-play-app.svg?branch=master
+[ci-link]:   https://travis-ci.org/dtaniwaki/akka-pusher-play-app?branch=master
