@@ -20,7 +20,7 @@ object PusherActorControllerSpec extends PlaySpecification with Results {
       bodyText must contain("pusher")
     }
   }
-  if(config.getString("pusher.appId").isDefined) {
+  if(config.getString("pusher.appId").isDefined && config.getString("pusher.appId").get.nonEmpty) {
     "#trigger" should {
       "should be valid" in {
         val result: Future[Result] = controller.triggerAction().apply(FakeRequest(
