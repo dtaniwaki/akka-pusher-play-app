@@ -9,6 +9,7 @@ import com.typesafe.config.{ Config, ConfigFactory }
 
 object PusherControllerSpec extends PlaySpecification with Results {
   val config = Configuration(ConfigFactory.load())
+  val controller = new PusherController(config)
 
   "#index" should {
     "should be valid" in {
@@ -17,8 +18,7 @@ object PusherControllerSpec extends PlaySpecification with Results {
       bodyText must contain("pusher")
     }
   }
-  if(config.getString("pusher.appId").isDefined && config.getString("pusher.appId").get.nonEmpty) {
-    val controller = new PusherController(config)
+  if(config.getBoolean("test.enablePusherTest").isDefined && config.getBoolean("test.enablePusherTest").get) {
     "#trigger" should {
       "should be valid" in {
         val result: Future[Result] = controller.triggerAction().apply(FakeRequest(
@@ -95,7 +95,5 @@ object PusherControllerSpec extends PlaySpecification with Results {
         Json.parse(bodyText) must be equalTo Json.obj("users" -> Json.arr())
       }
     }
-  } else {
-    skipped("pusher.appId is not defined")
   }
 }
