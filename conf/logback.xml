@@ -2,11 +2,16 @@
     
   <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
 
+  <property name="STDOUT_LOG_PATTERN" value="[%-5level] [%thread] - %msg%n"/>
+  <property name="STDOUT_DETAIL_LOG_PATTERN" value="[%-5level] [%thread] %logger{36} - %msg%n%caller{1}%n"/>
+
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%coloredLevel - %logger - %message%n%xException</pattern>
+      <pattern>${STDOUT_LOG_PATTERN}</pattern>
+      <charset>utf-8</charset>
     </encoder>
   </appender>
+
 
   <!--
     The logger name is typically the Java/Scala package name.
