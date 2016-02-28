@@ -24,6 +24,15 @@ If you want to try the app by yourself,
 
 You need to set the required environment variables above in Heroku as well.
 
+## Docker
+
+If you are lazy to prepare the environment, you can use docker to run this app without modifying your machine.
+
+```bash
+docker-compose up -d web
+open http://$(docker-machine ip $machine):8080/pusher
+```
+
 ## Contributing
 
 1. Fork it
