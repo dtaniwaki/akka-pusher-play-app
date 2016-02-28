@@ -4,8 +4,7 @@
   "website": "https://github.com/dtaniwaki/akka-pusher-play-app",
   "success_url": "/pusher",
   "addons": [],
-  "env": {
-  },
-  "scripts": {
-  }
+  "env": {},
+  "image": "heroku/scala",
+  "scripts": {}
 }
